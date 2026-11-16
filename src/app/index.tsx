@@ -1,7 +1,32 @@
 
 import { StyleSheet, Text, View } from 'react-native';
+import type { Announcement } from '../types/announcement';
+import { getUnreadAnnouncements } from '../services/announcementUtils';
+
+const sampleAnnouncements: Announcement[] = [
+  {
+    id: 'a1',
+    title: 'Enrollment reminders',
+    category: 'Academic',
+    read: false,
+  },
+  {
+    id: 'a2',
+    title: 'Campus orientation',
+    category: 'Events',
+    read: true,
+  },
+  {
+    id: 'a3',
+    title: 'Library schedule',
+    category: 'Notice',
+    read: false,
+  },
+];
 
 export default function HomeScreen() {
+  const unread = getUnreadAnnouncements(sampleAnnouncements);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Campus Connect</Text>
@@ -19,6 +44,16 @@ export default function HomeScreen() {
         that helps students stay connected
         with campus activities and updates.
       </Text>
+
+      <Text style={styles.count}>
+        Unread announcements: {unread.length}
+      </Text>
+
+      {sampleAnnouncements.map(item => (
+        <Text key={item.id} style={styles.announcement}>
+          {item.title}
+        </Text>
+      ))}
     </View>
   );
 }
@@ -45,6 +80,18 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     textAlign: 'center',
+    color: '#555555',
+    marginBottom: 10,
+  },
+  count: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#2563EB',
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  announcement: {
+    fontSize: 14,
     color: '#555555',
     marginBottom: 10,
   },
