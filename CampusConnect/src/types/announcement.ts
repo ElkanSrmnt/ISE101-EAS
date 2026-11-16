@@ -6,3 +6,11 @@ export interface Announcement {
   category: AnnouncementCategory;
   read: boolean;
 }
+
+export interface CampusAnnouncement {
+  id: string;
+  sender: string;
+  title: string;
+  message: string;
+  read: boolean;
+}

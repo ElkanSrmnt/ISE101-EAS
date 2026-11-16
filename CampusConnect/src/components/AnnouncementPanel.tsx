@@ -1,45 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-
-interface Announcement {
-  id: string;
-  sender: string;
-  title: string;
-  message: string;
-  read: boolean;
-}
-
-const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  {
-    id: '1',
-    sender: 'REGISTRAR',
-    title: 'Enrollment reminders for Second Semester',
-    message: 'Please settle your accounts before the priority registration period starts next week.',
-    read: false,
-  },
-  {
-    id: '2',
-    sender: 'STUDENT AFFAIRS',
-    title: 'New Campus Orientation and Guidelines',
-    message: 'All freshman students are required to attend the orientation at the main auditorium.',
-    read: false,
-  },
-  {
-    id: '3',
-    sender: 'LIBRARY',
-    title: 'Extended Operating Hours during Midterms',
-    message: 'The main library will remain open until 10:00 PM starting next Monday.',
-    read: false,
-  },
-];
+import { router } from 'expo-router';
+import { CAMPUS_ANNOUNCEMENTS } from '../constants/announcements';
+import type { CampusAnnouncement } from '../types/announcement';
 
 export function AnnouncementPanel() {
-  const [announcements, setAnnouncements] = useState<Announcement[]>(INITIAL_ANNOUNCEMENTS);
+  const [announcements, setAnnouncements] = useState<CampusAnnouncement[]>(CAMPUS_ANNOUNCEMENTS);
 
   const unreadCount = announcements.filter((item) => !item.read).length;
 
   const handleMarkAsRead = (id: string) => {
-    console.log('Mark as read clicked for ID:', id);
     setAnnouncements((prev) =>
       prev.map((item) => (item.id === id ? { ...item, read: true } : item))
     );
@@ -52,7 +22,6 @@ export function AnnouncementPanel() {
         <Text style={styles.unreadCounter}>{unreadCount} Unread</Text>
       </View>
 
-      {/* Gumamit kami ng .map sa halip na FlatList para iwas-bug sa Web browser clicks */}
       {announcements.map((item) => (
         <View key={item.id} style={[styles.card, item.read && styles.readCard]}>
           <View style={styles.cardHeader}>
@@ -65,14 +34,31 @@ export function AnnouncementPanel() {
           <Text style={styles.titleText}>{item.title}</Text>
           <Text style={styles.messageText}>{item.message}</Text>
 
-          {!item.read && (
-            <Pressable 
-              style={({ pressed }) => [styles.button, pressed && { opacity: 0.7 }]} 
-              onPress={() => handleMarkAsRead(item.id)}
+          <View style={styles.actionRow}>
+            {!item.read && (
+              <Pressable
+                accessibilityRole="button"
+                style={styles.markReadButton}
+                onPress={() => handleMarkAsRead(item.id)}
+              >
+                <Text style={styles.markReadText}>Mark as Read</Text>
+              </Pressable>
+            )}
+
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`View details for ${item.title}`}
+              style={styles.viewDetailsButton}
+              onPress={() =>
+                router.push({
+                  pathname: '/announcements/[id]',
+                  params: { id: item.id },
+                })
+              }
             >
-              <Text style={styles.buttonText}>Mark as Read</Text>
+              <Text style={styles.viewDetailsText}>View Details →</Text>
             </Pressable>
-          )}
+          </View>
         </View>
       ))}
     </View>
@@ -160,16 +146,32 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     lineHeight: 20,
   },
-  button: {
+  actionRow: {
+    gap: 8,
+  },
+  markReadButton: {
     backgroundColor: '#1E40AF',
     borderRadius: 8,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
     // @ts-ignore
     cursor: 'pointer',
   },
-  buttonText: {
+  markReadText: {
     color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  viewDetailsButton: {
+    backgroundColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    // @ts-ignore
+    cursor: 'pointer',
+  },
+  viewDetailsText: {
+    color: '#1E293B',
     fontSize: 14,
     fontWeight: '600',
   },

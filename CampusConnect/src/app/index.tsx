@@ -1,24 +1,31 @@
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ActionButton } from '../components/ActionButton';
 import { AnnouncementPanel } from '../components/AnnouncementPanel';
 import { SectionHeading } from '../components/SectionHeading';
 
 export default function HomeScreen() {
   const handleMainAction = () => {
-    Alert.alert('Campus Connect', 'All systems are up to date!');
+    console.log('BUTTON CLICKED!');
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
       {/* Week 4 Section Heading */}
       <SectionHeading />
-      
-      {/* Announcement Panel with FlatList */}
+
+      {/* Announcement Panel */}
       <AnnouncementPanel />
 
       {/* Week 4 Action Button */}
       <View style={styles.buttonContainer}>
-        <ActionButton label="Check for Updates" onPress={handleMainAction} />
+        <ActionButton
+          label="Check for Updates"
+          onPress={handleMainAction}
+        />
       </View>
     </ScrollView>
   );
