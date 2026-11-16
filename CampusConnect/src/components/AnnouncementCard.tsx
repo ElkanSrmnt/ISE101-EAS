@@ -1,30 +1,45 @@
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-
-type AnnouncementCardProps = {
+export interface Announcement {
+  id: string;
   title: string;
+  description: string;
   category: string;
-  read: boolean;
-  onMarkRead: () => void;
-};
+}
 
-export default function AnnouncementCard({
-  title,
-  category,
-  read,
-  onMarkRead,
-}: AnnouncementCardProps) {
+export function AnnouncementCard({
+  item,
+  isRead,
+  onToggleRead,
+}: {
+  item: Announcement;
+  isRead: boolean;
+  onToggleRead: () => void;
+}) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.info}>Category: {category}</Text>
-      <Text style={styles.info}>
-        Status: {read ? 'Read' : 'Unread'}
-      </Text>
+    <View style={[styles.card, isRead && styles.cardRead]}>
+      <View style={styles.headerRow}>
+        <Text style={styles.category}>{item.category}</Text>
+        <Text style={[styles.statusBadge, isRead ? styles.statusRead : styles.statusUnread]}>
+          {isRead ? 'Read' : 'Unread'}
+        </Text>
+      </View>
 
-      <Pressable style={styles.button} onPress={onMarkRead}>
-        <Text style={styles.buttonText}>
-          {read ? 'Mark as Unread' : 'Mark as Read'}
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.description}>{item.description}</Text>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Mark ${item.title} as ${isRead ? 'unread' : 'read'}`}
+        onPress={onToggleRead}
+        style={({ pressed }) => [
+          styles.button,
+          isRead ? styles.buttonSecondary : styles.buttonPrimary,
+          pressed && styles.buttonPressed,
+        ]}
+      >
+        <Text style={[styles.buttonText, isRead && styles.buttonTextSecondary]}>
+          {isRead ? 'Mark as Unread' : 'Mark as Read'}
         </Text>
       </Pressable>
     </View>
@@ -34,32 +49,78 @@ export default function AnnouncementCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    padding: 15,
-    marginVertical: 8,
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+  },
+  cardRead: {
+    backgroundColor: '#F8FAFC',
+    borderColor: '#CBD5E1',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  category: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#174A7E',
+    textTransform: 'uppercase',
+  },
+  statusBadge: {
+    fontSize: 12,
+    fontWeight: '600',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  statusUnread: {
+    backgroundColor: '#DBEAFE',
+    color: '#1E40AF',
+  },
+  statusRead: {
+    backgroundColor: '#E2E8F0',
+    color: '#475569',
   },
   title: {
     fontSize: 17,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#2563EB',
+    fontWeight: '700',
+    color: '#0F172A',
+    flexShrink: 1,
   },
-  info: {
+  description: {
     fontSize: 14,
-    color: '#555555',
-    marginBottom: 5,
+    color: '#334155',
+    lineHeight: 20,
   },
   button: {
-    backgroundColor: '#2575FC',
-    padding: 10,
+    marginTop: 4,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     borderRadius: 8,
-    marginTop: 10,
     alignItems: 'center',
+    cursor: 'pointer',
+  },
+  buttonPrimary: {
+    backgroundColor: '#174A7E',
+  },
+  buttonSecondary: {
+    backgroundColor: '#E2E8F0',
+  },
+  buttonPressed: {
+    opacity: 0.75,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: 'bold',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  buttonTextSecondary: {
+    color: '#1E293B',
   },
 });
-
